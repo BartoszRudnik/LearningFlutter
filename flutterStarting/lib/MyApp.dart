@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutterStarting/answerButton.dart';
-import 'package:flutterStarting/question.dart';
+import 'package:flutterStarting/EndOfQuiz.dart';
+import 'package:flutterStarting/Quiz.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -8,31 +8,50 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  void _testAnswer() {
-    if (_questionIndex < _questions.length - 1) {
-      setState(() {
-        _questionIndex += 1;
-      });
-    }
-    print(_questionIndex);
-  }
-
   var _questionIndex = 0;
+  var _nextQuestion = true;
+  var _totalScore = 0;
 
-  final _questions = [
+  final _questions = const [
     {
       'questionText': 'What is your favorite color?',
-      'answers': ['Black', 'Red', 'Blue']
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Blue', 'score': 15},
+        {'text': 'Red', 'score': 5},
+      ]
     },
     {
       'questionText': 'What is your favorite city?',
-      'answers': ['London', 'Paris', 'Barcelona']
+      'answers': [
+        {'text': 'London', 'score': 15},
+        {'text': 'Paris', 'score': 5},
+        {'text': 'Zabrze', 'score': 35},
+      ]
     },
     {
       'questionText': 'What is your favorite animal?',
-      'answers': ['Cat', 'Dog', 'Rabbit']
+      'answers': [
+        {'test': 'Cat', 'score': 5},
+        {'test': 'Dog', 'score': 10},
+        {'test': 'Rabbit', 'score': 15},
+      ]
     },
   ];
+
+  void _testAnswer(int questionScore) {
+    setState(() {
+      if (_questionIndex < _questions.length - 1) {
+        _questionIndex += 1;
+      } else {
+        _nextQuestion = false;
+      }
+      _totalScore += questionScore;
+    });
+    print(_questionIndex);
+    print(_nextQuestion);
+    print(_totalScore);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +60,7 @@ class MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My title'),
         ),
-        body: Column(
-          children: [
-            Question(
-              _questions[_questionIndex]['questionText'],
-            ),
-            ...(_questions[_questionIndex]['answers'] as List<String>).map((question) {
-              return answerButton(question, _testAnswer);
-            }).toList()
-          ],
-        ),
+        body: _nextQuestion ? Quiz(_questions, _questionIndex, _testAnswer) : EndOfQuiz("End of quiz"),
       ),
     );
   }

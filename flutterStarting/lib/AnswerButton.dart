@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class answerButton extends StatelessWidget {
+class AnswerButton extends StatelessWidget {
   final String _answerText;
-  final Function _selectHandler;
+  final Function _testAnswer;
 
-  answerButton(this._answerText, this._selectHandler);
+  AnswerButton(this._answerText, this._testAnswer);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class answerButton extends StatelessWidget {
         color: Colors.lightBlue,
         textColor: Colors.black87,
         child: Text(_answerText),
-        onPressed: _selectHandler,
+        onPressed: _testAnswer,
       ),
     );
   }
