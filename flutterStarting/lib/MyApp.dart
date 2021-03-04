@@ -32,9 +32,9 @@ class MyAppState extends State<MyApp> {
     {
       'questionText': 'What is your favorite animal?',
       'answers': [
-        {'test': 'Cat', 'score': 5},
-        {'test': 'Dog', 'score': 10},
-        {'test': 'Rabbit', 'score': 15},
+        {'text': 'Cat', 'score': 5},
+        {'text': 'Dog', 'score': 10},
+        {'text': 'Rabbit', 'score': 15},
       ]
     },
   ];
@@ -53,6 +53,14 @@ class MyAppState extends State<MyApp> {
     print(_totalScore);
   }
 
+  void _clearQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _nextQuestion = true;
+      _totalScore = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -60,7 +68,7 @@ class MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My title'),
         ),
-        body: _nextQuestion ? Quiz(_questions, _questionIndex, _testAnswer) : EndOfQuiz("End of quiz"),
+        body: _nextQuestion ? Quiz(_questions, _questionIndex, _testAnswer) : EndOfQuiz(_totalScore, _clearQuiz),
       ),
     );
   }
