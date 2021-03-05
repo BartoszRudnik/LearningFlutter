@@ -1,5 +1,6 @@
 import 'package:PersonalExpensesApp/transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,6 +20,9 @@ class MyHomePage extends StatelessWidget {
     Transaction(901.23, 't2', 'Apartment rent', DateTime.now()),
   ];
 
+  String titleInput;
+  String amountInput;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +39,34 @@ class MyHomePage extends StatelessWidget {
               color: Colors.blue,
               child: Text('CHART!'),
               elevation: 5,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10),
+            child: Card(
+              elevation: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Title',
+                    ),
+                    onChanged: (value) => {this.titleInput = value},
+                  ),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Amount',
+                    ),
+                    onChanged: (value) => {this.amountInput = value},
+                  ),
+                  FlatButton(
+                    child: Text('Submit transaction'),
+                    onPressed: () => {},
+                    textColor: Colors.purple,
+                  )
+                ],
+              ),
             ),
           ),
           Column(
@@ -57,7 +89,7 @@ class MyHomePage extends StatelessWidget {
                       ),
                       padding: EdgeInsets.all(10),
                       child: Text(
-                        transaction.amount.toString(),
+                        '\$ ${transaction.amount}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -76,7 +108,7 @@ class MyHomePage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          transaction.transactionDate.toString(),
+                          DateFormat.yMMMMd().format(transaction.transactionDate),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 10,
