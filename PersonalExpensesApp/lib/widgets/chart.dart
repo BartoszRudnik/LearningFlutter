@@ -9,9 +9,10 @@ class Chart extends StatelessWidget {
 
   bool compareDates(DateTime firstDate, DateTime secondDate) {
     // TO-DO
+    return false;
   }
 
-  List<Map<String, Object>> get GroupedTransactionsValues {
+  List<Map<String, Object>> get groupedTransactionsValues {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().subtract(
         Duration(days: index),
