@@ -10,8 +10,9 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        children: _listOfTransactions.map((transaction) {
+      height: 500,
+      child: ListView.builder(
+        itemBuilder: (context, index) {
           return Card(
             child: Row(
               children: <Widget>[
@@ -21,20 +22,19 @@ class TransactionList extends StatelessWidget {
                     horizontal: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.lightBlue,
                     border: Border.all(
-                      color: Colors.black87,
                       width: 2,
                       style: BorderStyle.solid,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    '\$ ${transaction.amount}',
+                    '\$ ${_listOfTransactions[index].amount.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: Colors.purple,
+                      color: Theme.of(context).accentColor,
                     ),
                   ),
                 ),
@@ -42,18 +42,19 @@ class TransactionList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      transaction.title,
+                      _listOfTransactions[index].title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
+                        color: Theme.of(context).primaryColorDark,
                       ),
                     ),
                     Text(
-                      DateFormat.yMMMMd().format(transaction.transactionDate),
+                      DateFormat.yMMMMd().format(_listOfTransactions[index].transactionDate),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
-                        color: Colors.grey,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                   ],
@@ -61,7 +62,8 @@ class TransactionList extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        },
+        itemCount: _listOfTransactions.length,
       ),
     );
   }
