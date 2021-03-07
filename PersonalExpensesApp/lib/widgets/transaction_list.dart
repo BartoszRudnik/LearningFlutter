@@ -10,7 +10,7 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500,
+      height: 375,
       width: double.infinity,
       child: _listOfTransactions.isEmpty
           ? Column(
@@ -36,44 +36,28 @@ class TransactionList extends StatelessWidget {
           : ListView.builder(
               itemBuilder: (context, index) {
                 return Card(
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 15,
-                          horizontal: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 2,
-                            style: BorderStyle.solid,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          '\$ ${_listOfTransactions[index].amount.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Theme.of(context).accentColor,
-                          ),
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 5,
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Padding(
+                        padding: EdgeInsets.all(6),
+                        child: FittedBox(
+                          child: Text('\$${_listOfTransactions[index].amount}'),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            _listOfTransactions[index].title,
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                          Text(
-                            DateFormat.yMMMMd().format(_listOfTransactions[index].transactionDate),
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
+                    title: Text(
+                      _listOfTransactions[index].title,
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMd().format(_listOfTransactions[index].transactionDate),
+                    ),
                   ),
                 );
               },
