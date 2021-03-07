@@ -1,4 +1,5 @@
 import 'package:PersonalExpensesApp/models/transaction.dart';
+import 'package:PersonalExpensesApp/widgets/chart.dart';
 import 'package:PersonalExpensesApp/widgets/newTransaction.dart';
 import 'package:PersonalExpensesApp/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _listOfTransactions = [
-    // Transaction(25.24, 't1', 'New shoes', DateTime.now()),
-    // Transaction(901.23, 't2', 'Apartment rent', DateTime.now()),
-  ];
+  final List<Transaction> _listOfTransactions = [];
+
+  int _dayDifference(DateTime today, DateTime transactionDate) {
+    return today.difference(transactionDate).inDays;
+  }
+
+  List<Transaction> get _recentTrsansactions {
+    return _listOfTransactions.where((transaction) {
+      return _dayDifference(DateTime.now(), transaction.transactionDate) <= 7;
+    }).toList();
+  }
 
   void _addTransaction(String title, double amount) {
     final newUserTransaction = Transaction(
@@ -57,14 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                child: Text('CHART!'),
-                elevation: 5,
-              ),
-            ),
-            TransactionList(_listOfTransactions)
+            Chart(_recentTrsansactions),
+            TransactionList(_listOfTransactions),
           ],
         ),
       ),
