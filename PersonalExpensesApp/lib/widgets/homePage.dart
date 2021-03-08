@@ -22,17 +22,27 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addTransaction(String title, double amount) {
-    final newUserTransaction = Transaction(
-      amount,
-      DateTime.now().toString(),
-      title,
-      DateTime.now(),
-    );
+  void _addTransaction(String title, double amount, DateTime transactionDate, String transactionId) {
+    if (transactionId != null) {
+      setState(() {
+        Transaction transaction = _listOfTransactions.firstWhere((element) => element.id == transactionId);
 
-    setState(() {
-      _listOfTransactions.add(newUserTransaction);
-    });
+        transaction.amount = amount;
+        transaction.title = title;
+        transaction.transactionDate = transactionDate;
+      });
+    } else {
+      final newUserTransaction = Transaction(
+        amount,
+        DateTime.now().toString(),
+        title,
+        transactionDate,
+      );
+
+      setState(() {
+        _listOfTransactions.add(newUserTransaction);
+      });
+    }
   }
 
   void _startAddNewTransaction(BuildContext buildContext) {
@@ -42,6 +52,25 @@ class _MyHomePageState extends State<MyHomePage> {
         return GestureDetector(
           onTap: () {},
           child: NewTransaction(_addTransaction),
+          behavior: HitTestBehavior.opaque,
+        );
+      },
+    );
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _listOfTransactions.removeWhere((element) => element.id == id);
+    });
+  }
+
+  void _editTransaction(BuildContext buildContext, Transaction transaction) {
+    showModalBottomSheet(
+      context: buildContext,
+      builder: (_) {
+        return GestureDetector(
+          onTap: () {},
+          child: NewTransaction.edit(_addTransaction, transaction),
           behavior: HitTestBehavior.opaque,
         );
       },
@@ -66,7 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Chart(_recentTrsansactions),
-            TransactionList(_listOfTransactions),
+            Expanded(
+              child: TransactionList(_listOfTransactions, _deleteTransaction, _editTransaction),
+            ),
           ],
         ),
       ),
