@@ -66,63 +66,68 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Card(
-        elevation: 8,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Title',
-              ),
-              controller: _titleInput,
-              onSubmitted: (_) => _submitTransaction(),
-            ),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Amount',
-              ),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              controller: _amountInput,
-              onSubmitted: (_) => _submitTransaction(),
-            ),
-            Container(
-              height: 75,
-              padding: EdgeInsets.all(8),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(_transactionDate == null ? 'No data choosen' : 'Picked date : ${DateFormat.yMMMEd().format(_transactionDate)}'),
+    return LayoutBuilder(
+      builder: (context, constraint) {
+        return Container(
+          padding: EdgeInsets.all(5),
+          height: constraint.maxHeight * 1.2,
+          child: Card(
+            elevation: 8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Title',
                   ),
-                  FlatButton(
-                    textColor: Theme.of(context).primaryColorDark,
-                    onPressed: _showDatePicker,
-                    child: Text(
-                      'Choose date',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                  controller: _titleInput,
+                  onSubmitted: (_) => _submitTransaction(),
+                ),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Amount',
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  controller: _amountInput,
+                  onSubmitted: (_) => _submitTransaction(),
+                ),
+                Container(
+                  height: constraint.maxHeight * 0.1,
+                  padding: EdgeInsets.all(2),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(_transactionDate == null ? 'No data choosen' : 'Picked date : ${DateFormat.yMMMEd().format(_transactionDate)}'),
                       ),
+                      FlatButton(
+                        textColor: Theme.of(context).primaryColorDark,
+                        onPressed: _showDatePicker,
+                        child: Text(
+                          'Choose date',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                RaisedButton(
+                  child: Text(
+                    'Submit transaction',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColorDark,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              ),
+                  onPressed: _submitTransaction,
+                  color: Theme.of(context).primaryColorLight,
+                )
+              ],
             ),
-            RaisedButton(
-              child: Text(
-                'Submit transaction',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColorDark,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onPressed: _submitTransaction,
-              color: Theme.of(context).primaryColorLight,
-            )
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

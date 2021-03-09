@@ -11,6 +11,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _listOfTransactions = [];
+  bool _showChart = false;
 
   int _dayDifference(DateTime today, DateTime transactionDate) {
     return today.difference(transactionDate).inDays;
@@ -79,25 +80,53 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Text('Personal Expenses'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.add_circle),
+          onPressed: () => _startAddNewTransaction(context),
+        )
+      ],
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add_circle),
-            onPressed: () => _startAddNewTransaction(context),
-          )
-        ],
-      ),
+      appBar: appBar,
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Chart(_recentTrsansactions),
-            Expanded(
-              child: TransactionList(_listOfTransactions, _deleteTransaction, _editTransaction),
+            Container(
+              height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.05,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show chart'),
+                  Switch(
+                    value: _showChart,
+                    onChanged: (value) {
+                      setState(
+                        () {
+                          _showChart = value;
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
+            _showChart
+                ? Container(
+                    height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.75,
+                    child: Chart(_recentTrsansactions),
+                  )
+                : Container(
+                    height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.85,
+                    child: Expanded(
+                      child: TransactionList(_listOfTransactions, _deleteTransaction, _editTransaction),
+                    ),
+                  ),
           ],
         ),
       ),
