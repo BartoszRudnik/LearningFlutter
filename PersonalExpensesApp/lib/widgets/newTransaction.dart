@@ -70,7 +70,7 @@ class _NewTransactionState extends State<NewTransaction> {
       builder: (context, constraint) {
         return Container(
           padding: EdgeInsets.all(5),
-          height: constraint.maxHeight * 1.2,
+          height: constraint.maxHeight,
           child: Card(
             elevation: 8,
             child: Column(

@@ -56,7 +56,7 @@ class TransactionList extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.all(6),
                         child: FittedBox(
-                          child: Text('\$${_listOfTransactions[index].amount}'),
+                          child: Text('\$${_listOfTransactions[index].amount.toStringAsFixed(2)}'),
                         ),
                       ),
                     ),
@@ -69,18 +69,21 @@ class TransactionList extends StatelessWidget {
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
+                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        IconButton(
+                        FlatButton.icon(
+                          label: Text('Edit'),
                           icon: Icon(Icons.edit_outlined),
-                          color: Theme.of(context).errorColor,
+                          textColor: Theme.of(context).primaryColorDark,
                           onPressed: () => _editTransaction(
                             context,
                             _listOfTransactions[index],
                           ),
                         ),
-                        IconButton(
+                        FlatButton.icon(
+                          label: Text('Delete'),
                           icon: Icon(Icons.delete_outline),
-                          color: Theme.of(context).errorColor,
+                          textColor: Theme.of(context).primaryColorDark,
                           onPressed: () => _deleteTransaction(_listOfTransactions[index].id),
                         ),
                       ],

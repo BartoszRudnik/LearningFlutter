@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:PersonalExpensesApp/models/transaction.dart';
 import 'package:PersonalExpensesApp/widgets/chart.dart';
 import 'package:PersonalExpensesApp/widgets/newTransaction.dart';
 import 'package:PersonalExpensesApp/widgets/transaction_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -80,61 +83,102 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-      title: Text('Personal Expenses'),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add_circle),
-          onPressed: () => _startAddNewTransaction(context),
-        )
-      ],
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+
+    final PreferredSizeWidget appBar = Platform.isAndroid
+        ? AppBar(
+            title: Text('Personal Expenses'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add_circle),
+                onPressed: () => _startAddNewTransaction(context),
+              )
+            ],
+          )
+        : CupertinoNavigationBar(
+            middle: Text(
+              'Personal Expenses',
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add_circled_solid),
+                  onTap: () => _startAddNewTransaction(context),
+                )
+              ],
+            ),
+          );
+
+    final transactionList = Container(
+      height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+      child: Expanded(
+        child: TransactionList(_listOfTransactions, _deleteTransaction, _editTransaction),
+      ),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      body: Container(
+    final pageBody = SafeArea(
+      child: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.05,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Show chart'),
-                  Switch(
-                    value: _showChart,
-                    onChanged: (value) {
-                      setState(
-                        () {
-                          _showChart = value;
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            _showChart
-                ? Container(
-                    height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.75,
-                    child: Chart(_recentTrsansactions),
-                  )
-                : Container(
-                    height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.85,
-                    child: Expanded(
-                      child: TransactionList(_listOfTransactions, _deleteTransaction, _editTransaction),
+            if (isLandscape)
+              Container(
+                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.05,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Show chart',
+                      style: Theme.of(context).textTheme.headline6,
                     ),
-                  ),
+                    Switch.adaptive(
+                      value: _showChart,
+                      onChanged: (value) {
+                        setState(
+                          () {
+                            _showChart = value;
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            if (!isLandscape)
+              Container(
+                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
+                child: Chart(_recentTrsansactions),
+              ),
+            if (!isLandscape) transactionList,
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.75,
+                      child: Chart(_recentTrsansactions),
+                    )
+                  : transactionList,
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_circle),
-        onPressed: () => _startAddNewTransaction(context),
-      ),
     );
+
+    return Platform.isAndroid
+        ? Scaffold(
+            appBar: appBar,
+            body: pageBody,
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Platform.isAndroid
+                ? FloatingActionButton(
+                    child: Icon(Icons.add_circle),
+                    onPressed: () => _startAddNewTransaction(context),
+                  )
+                : Container(),
+          )
+        : CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          );
   }
 }
