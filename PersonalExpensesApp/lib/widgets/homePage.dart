@@ -81,6 +81,49 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  List<Widget> _buildLandscapeContent(AppBar appBar, Widget transactionList) {
+    return [
+      Container(
+        height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.05,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Show chart',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            Switch.adaptive(
+              value: _showChart,
+              onChanged: (value) {
+                setState(
+                  () {
+                    _showChart = value;
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      _showChart
+          ? Container(
+              height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.75,
+              child: Chart(_recentTrsansactions),
+            )
+          : transactionList,
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(AppBar appBar, Widget transactionList) {
+    return [
+      Container(
+        height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
+        child: Chart(_recentTrsansactions),
+      ),
+      transactionList
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
@@ -124,41 +167,15 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (isLandscape)
-              Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.05,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Show chart',
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    Switch.adaptive(
-                      value: _showChart,
-                      onChanged: (value) {
-                        setState(
-                          () {
-                            _showChart = value;
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
+              ..._buildLandscapeContent(
+                appBar,
+                transactionList,
               ),
             if (!isLandscape)
-              Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
-                child: Chart(_recentTrsansactions),
+              ..._buildPortraitContent(
+                appBar,
+                transactionList,
               ),
-            if (!isLandscape) transactionList,
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.75,
-                      child: Chart(_recentTrsansactions),
-                    )
-                  : transactionList,
           ],
         ),
       ),
