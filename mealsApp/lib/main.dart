@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mealsApp/screen/categoriesScreen.dart';
 import 'package:mealsApp/screen/categoryMealsScreen.dart';
+import 'package:mealsApp/screen/mealDetailScreen.dart';
 
 void main() => runApp(MyApp());
 
@@ -31,6 +32,17 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (ctx) => CategoriesScreen(),
         CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(),
+        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+      },
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (ctx) => CategoriesScreen(),
+        );
+      },
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (ctx) => CategoriesScreen(),
+        );
       },
     );
   }
