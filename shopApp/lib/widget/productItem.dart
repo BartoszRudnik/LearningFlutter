@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shopApp/model/product.dart';
 import 'package:shopApp/screen/productDetailScreen.dart';
 
 class ProductItem extends StatelessWidget {
@@ -16,35 +18,43 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<Product>(
+      context,
+      listen: false,
+    );
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).pushNamed(
             ProductDetailScreen.routeName,
-            arguments: this.id,
+            arguments: product.id,
           );
         },
         child: GridTile(
           child: Image.network(
-            this.imageUrl,
+            product.imageUrl,
             fit: BoxFit.cover,
           ),
           header: GridTileBar(
             backgroundColor: Colors.black26,
             leading: Icon(Icons.attach_money),
             title: Text(
-              this.price.toStringAsFixed(2),
+              product.price.toStringAsFixed(2),
               textAlign: TextAlign.left,
             ),
           ),
           footer: GridTileBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.favorite,
+            leading: Consumer<Product>(
+              builder: (context, product, child) => IconButton(
+                icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                ),
+                color: Theme.of(context).accentColor,
+                onPressed: () {
+                  product.toggleFavoriteStatus();
+                },
               ),
-              color: Theme.of(context).accentColor,
-              onPressed: () {},
             ),
             trailing: IconButton(
               icon: Icon(Icons.shopping_cart),
@@ -53,7 +63,7 @@ class ProductItem extends StatelessWidget {
             ),
             backgroundColor: Colors.black54,
             title: Text(
-              this.title,
+              product.title,
               textAlign: TextAlign.center,
             ),
           ),
