@@ -21,6 +21,10 @@ class Cart with ChangeNotifier {
     return {..._itemsInCart};
   }
 
+  int get poisitionsCount {
+    return _itemsInCart.length;
+  }
+
   int get itemCount {
     int sum = 0;
 
@@ -29,6 +33,16 @@ class Cart with ChangeNotifier {
         sum += element.quantity;
       },
     );
+
+    return sum;
+  }
+
+  double get cartTotal {
+    double sum = 0.0;
+
+    _itemsInCart.values.forEach((element) {
+      sum += (element.price * element.quantity);
+    });
 
     return sum;
   }
@@ -54,6 +68,12 @@ class Cart with ChangeNotifier {
         ),
       );
     }
+
+    notifyListeners();
+  }
+
+  void removeItem(String productId) {
+    _itemsInCart.remove(productId);
 
     notifyListeners();
   }
