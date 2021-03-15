@@ -82,4 +82,22 @@ class Cart with ChangeNotifier {
     _itemsInCart = {};
     notifyListeners();
   }
+
+  void removeSingleItem(String productId) {
+    if (_itemsInCart.containsKey(productId)) {
+      if (_itemsInCart[productId].quantity > 1) {
+        _itemsInCart.update(
+            productId,
+            (item) => CartItem(
+                  id: item.id,
+                  title: item.title,
+                  quantity: item.quantity - 1,
+                  price: item.price,
+                ));
+      } else {
+        removeItem(productId);
+      }
+    }
+    notifyListeners();
+  }
 }
