@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../exception/httpException.dart';
 import '../model/product.dart';
 
 class ProductsProvider with ChangeNotifier {
@@ -45,14 +46,33 @@ class ProductsProvider with ChangeNotifier {
     return [..._items.where((element) => element.isFavorite)];
   }
 
-  Future<void> updateProduct(Product product) {
+  Future<void> updateProduct(String id, Product product) async {
+    var url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/$id.json';
+
     var productIndex = _items.indexWhere(
-      (element) => element.id == product.id,
+      (element) => element.id == id,
     );
 
-    _items[productIndex] = product;
-    notifyListeners();
-    return Future.value();
+    if (productIndex >= 0) {
+      try {
+        await http.patch(
+          url,
+          body: json.encode(
+            {
+              'title': product.title,
+              'price': product.price,
+              'imageUrl': product.imageUrl,
+              'description': product.description,
+              'isFavorite': product.isFavorite,
+            },
+          ),
+        );
+      } catch (error) {
+        throw error;
+      }
+      _items[productIndex] = product;
+      notifyListeners();
+    }
   }
 
   Future<void> addProduct(Product product) async {
@@ -107,8 +127,22 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String productId) {
+  Future<void> deleteProduct(String productId) async {
+    var url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/$productId.json';
+
+    var existingProduct = _items.firstWhere((element) => element.id == productId);
     _items.removeWhere((element) => element.id == productId);
+
+    try {
+      final response = await http.delete(url);
+      if (response.statusCode >= 400) {
+        throw HttpException('Wrong product id');
+      }
+      existingProduct = null;
+    } catch (error) {
+      _items.add(existingProduct);
+      throw error;
+    }
 
     notifyListeners();
   }

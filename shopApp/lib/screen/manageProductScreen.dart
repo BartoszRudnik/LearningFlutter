@@ -117,7 +117,7 @@ class _ManageProductScreenState extends State<ManageProductScreen> {
           Navigator.of(context).pop();
         }
       } else {
-        Provider.of<ProductsProvider>(context, listen: false).updateProduct(_product).then(
+        Provider.of<ProductsProvider>(context, listen: false).updateProduct(_product.id, _product).then(
           (value) {
             _isLoading = false;
             Navigator.of(context).pop();
