@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shopApp/model/product.dart';
-import 'package:shopApp/provider/productsProvider.dart';
+
+import '../model/product.dart';
+import '../provider/productsProvider.dart';
 
 class ManageProductScreen extends StatefulWidget {
   static const routeName = 'manage-product';
@@ -82,7 +83,7 @@ class _ManageProductScreenState extends State<ManageProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     _formKey.currentState.validate();
 
     if (_formKey.currentState.validate()) {
@@ -91,14 +92,30 @@ class _ManageProductScreenState extends State<ManageProductScreen> {
         _isLoading = true;
       });
       if (_product.id == null) {
-        Provider.of<ProductsProvider>(context, listen: false).addProduct(_product).then(
-          (value) {
-            setState(() {
-              _isLoading = false;
-            });
-            Navigator.of(context).pop();
-          },
-        );
+        try {
+          await Provider.of<ProductsProvider>(context, listen: false).addProduct(_product);
+        } catch (error) {
+          await showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text('An error occurred!'),
+              content: Text('Something went wrong.'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                )
+              ],
+            ),
+          );
+        } finally {
+          setState(() {
+            _isLoading = false;
+          });
+          Navigator.of(context).pop();
+        }
       } else {
         Provider.of<ProductsProvider>(context, listen: false).updateProduct(_product).then(
           (value) {

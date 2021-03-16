@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:shopApp/model/cart.dart';
-import 'package:shopApp/model/order.dart';
-import 'package:shopApp/provider/productsProvider.dart';
-import 'package:shopApp/screen/cartScreen.dart';
-import 'package:shopApp/screen/manageProductScreen.dart';
-import 'package:shopApp/screen/ordersScreen.dart';
-import 'package:shopApp/screen/productDetailScreen.dart';
-import 'package:shopApp/screen/productOverviewScreen.dart';
 import 'package:provider/provider.dart';
-import 'package:shopApp/screen/userProductScreen.dart';
+
+import 'model/cart.dart';
+import 'model/order.dart';
+import 'provider/productsProvider.dart';
+import 'screen/cartScreen.dart';
+import 'screen/manageProductScreen.dart';
+import 'screen/ordersScreen.dart';
+import 'screen/productDetailScreen.dart';
+import 'screen/productOverviewScreen.dart';
+import 'screen/userProductScreen.dart';
 
 void main() => runApp(MyApp());
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'MyShop',
+        /*  */
         theme: ThemeData(
           primarySwatch: Colors.purple,
           accentColor: Colors.orangeAccent,
