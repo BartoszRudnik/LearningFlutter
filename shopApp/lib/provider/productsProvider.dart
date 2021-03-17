@@ -7,7 +7,7 @@ import '../exception/httpException.dart';
 import '../model/product.dart';
 
 class ProductsProvider with ChangeNotifier {
-  List<Product> _items = [
+  List<Product> itemsList = [
     // Product(
     //   id: 'p1',
     //   title: 'Red Shirt',
@@ -38,18 +38,25 @@ class ProductsProvider with ChangeNotifier {
     // ),
   ];
 
+  final String authToken;
+
+  ProductsProvider({
+    @required this.authToken,
+    @required this.itemsList,
+  });
+
   List<Product> get items {
-    return [..._items];
+    return [...itemsList];
   }
 
   List<Product> get favoriteItems {
-    return [..._items.where((element) => element.isFavorite)];
+    return [...itemsList.where((element) => element.isFavorite)];
   }
 
   Future<void> updateProduct(String id, Product product) async {
     var url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/$id.json';
 
-    var productIndex = _items.indexWhere(
+    var productIndex = itemsList.indexWhere(
       (element) => element.id == id,
     );
 
@@ -70,7 +77,7 @@ class ProductsProvider with ChangeNotifier {
       } catch (error) {
         throw error;
       }
-      _items[productIndex] = product;
+      itemsList[productIndex] = product;
       notifyListeners();
     }
   }
@@ -95,7 +102,7 @@ class ProductsProvider with ChangeNotifier {
         imageUrl: product.imageUrl,
         id: json.decode(response.body)['name'],
       );
-      _items.add(newProduct);
+      itemsList.add(newProduct);
       notifyListeners();
     } catch (error) {
       throw error;
@@ -103,7 +110,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> fetchProducts() async {
-    const url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products.json';
+    final url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products.json?auth=${this.authToken}';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -121,7 +128,7 @@ class ProductsProvider with ChangeNotifier {
             ),
           );
         });
-        _items = loadedProducts;
+        itemsList = loadedProducts;
         notifyListeners();
       }
     } catch (error) {
@@ -132,8 +139,8 @@ class ProductsProvider with ChangeNotifier {
   Future<void> deleteProduct(String productId) async {
     var url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/$productId.json';
 
-    var existingProduct = _items.firstWhere((element) => element.id == productId);
-    _items.removeWhere((element) => element.id == productId);
+    var existingProduct = itemsList.firstWhere((element) => element.id == productId);
+    itemsList.removeWhere((element) => element.id == productId);
 
     try {
       final response = await http.delete(url);
@@ -142,7 +149,7 @@ class ProductsProvider with ChangeNotifier {
       }
       existingProduct = null;
     } catch (error) {
-      _items.add(existingProduct);
+      itemsList.add(existingProduct);
       throw error;
     }
 
@@ -150,6 +157,6 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Product findById(String id) {
-    return _items.firstWhere((element) => element.id == id);
+    return itemsList.firstWhere((element) => element.id == id);
   }
 }

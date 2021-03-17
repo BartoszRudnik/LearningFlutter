@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopApp/provider/auth.dart';
+import 'package:shopApp/screen/authScreen.dart';
 
 import 'model/cart.dart';
 import 'model/order.dart';
@@ -19,7 +21,14 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => ProductsProvider(),
+          create: (context) => Auth(),
+        ),
+        ChangeNotifierProxyProvider<Auth, ProductsProvider>(
+          create: null,
+          update: (ctx, auth, previousProducts) => ProductsProvider(
+            authToken: auth.token,
+            itemsList: previousProducts == null ? [] : previousProducts.items,
+          ),
         ),
         ChangeNotifierProvider(
           create: (context) => Cart(),
@@ -28,22 +37,24 @@ class MyApp extends StatelessWidget {
           create: (context) => Order(),
         )
       ],
-      child: MaterialApp(
-        title: 'MyShop',
-        /*  */
-        theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.orangeAccent,
-          fontFamily: 'Lato',
+      child: Consumer<Auth>(
+        builder: (ctx, authData, child) => MaterialApp(
+          title: 'MyShop',
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+            accentColor: Colors.orangeAccent,
+            fontFamily: 'Lato',
+          ),
+          home: authData.isAuth ? ProductOverviewScreen() : AuthScreen(),
+          routes: {
+            ProductOverviewScreen.routeName: (ctx) => ProductOverviewScreen(),
+            ManageProductScreen.routeName: (ctx) => ManageProductScreen(),
+            UserProductScreen.routeName: (ctx) => UserProductScreen(),
+            OrdersScreen.routeName: (ctx) => OrdersScreen(),
+            CartScreen.routeName: (ctx) => CartScreen(),
+            ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+          },
         ),
-        home: ProductOverviewScreen(),
-        routes: {
-          ManageProductScreen.routeName: (ctx) => ManageProductScreen(),
-          UserProductScreen.routeName: (ctx) => UserProductScreen(),
-          OrdersScreen.routeName: (ctx) => OrdersScreen(),
-          CartScreen.routeName: (ctx) => CartScreen(),
-          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-        },
       ),
     );
   }
