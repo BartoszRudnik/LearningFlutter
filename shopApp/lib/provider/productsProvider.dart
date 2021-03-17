@@ -39,10 +39,12 @@ class ProductsProvider with ChangeNotifier {
   ];
 
   final String authToken;
+  final String userId;
 
   ProductsProvider({
     @required this.authToken,
     @required this.itemsList,
+    @required this.userId,
   });
 
   List<Product> get items {
@@ -54,7 +56,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> updateProduct(String id, Product product) async {
-    var url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/$id.json';
+    var url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/$id.json?auth=${this.authToken}';
 
     var productIndex = itemsList.indexWhere(
       (element) => element.id == id,
@@ -83,7 +85,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    const url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products.json';
+    final url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products.json?auth=${this.authToken}';
     try {
       final response = await http.post(
         url,
@@ -92,7 +94,7 @@ class ProductsProvider with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
+          'creatorId': this.userId,
         }),
       );
       final newProduct = Product(
@@ -109,13 +111,16 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchProducts() async {
-    final url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products.json?auth=${this.authToken}';
+  Future<void> fetchProducts([bool filterByUser = false]) async {
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="${this.userId}"' : '';
+    final url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products.json?auth=${this.authToken}&$filterString';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
       if (extractedData != null) {
+        final favoriteRespone = await http.get('https://learningflutter-81fa2-default-rtdb.firebaseio.com/userFavorites/${this.userId}.json?auth=${this.authToken}');
+        final favoriteData = json.decode(favoriteRespone.body);
         extractedData.forEach((prodId, prodData) {
           loadedProducts.add(
             Product(
@@ -124,7 +129,7 @@ class ProductsProvider with ChangeNotifier {
               imageUrl: prodData['imageUrl'],
               price: prodData['price'],
               title: prodData['title'],
-              isFavorite: prodData['isFavorite'],
+              isFavorite: favoriteData == null ? false : favoriteData[prodId] ?? false,
             ),
           );
         });
@@ -137,7 +142,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String productId) async {
-    var url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/$productId.json';
+    final url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/$productId.json?auth=${this.authToken}';
 
     var existingProduct = itemsList.firstWhere((element) => element.id == productId);
     itemsList.removeWhere((element) => element.id == productId);

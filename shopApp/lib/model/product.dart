@@ -21,19 +21,19 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  Future<void> toggleFavoriteStatus() async {
-    var url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/products/${this.id}.json';
+  Future<void> toggleFavoriteStatus(String authToken, String userId) async {
+    final url = 'https://learningflutter-81fa2-default-rtdb.firebaseio.com/userFavorites/$userId/${this.id}.json?auth=$authToken';
     var oldFavoriteStatus = this.isFavorite;
 
     this.isFavorite = !this.isFavorite;
     notifyListeners();
 
     try {
-      final response = await http.patch(
+      final response = await http.put(
         url,
-        body: json.encode({
-          'isFavorite': this.isFavorite,
-        }),
+        body: json.encode(
+          this.isFavorite,
+        ),
       );
       if (response.statusCode >= 400) {
         throw new HttpException('Could not change favorite');
