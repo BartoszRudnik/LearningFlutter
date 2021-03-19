@@ -1,6 +1,11 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/greatPlaces.dart';
 import '../widgets/imageInput.dart';
+import '../widgets/locationInput.dart';
 
 class AddPlace extends StatefulWidget {
   static const routeName = '/addPlace';
@@ -11,12 +16,30 @@ class AddPlace extends StatefulWidget {
 
 class _AddPlaceState extends State<AddPlace> {
   final _titleController = TextEditingController();
+  File _pickedImage;
+
+  void _selectImage(File file) {
+    _pickedImage = file;
+  }
+
+  void _savePlace() {
+    if (this._titleController.text.isEmpty || this._pickedImage == null) {
+      return;
+    }
+
+    Provider.of<GreatPlaces>(context, listen: false).addPlace(
+      this._titleController.text,
+      this._pickedImage,
+    );
+
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add new place'),
+        title: const Text('Add new place'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -24,24 +47,30 @@ class _AddPlaceState extends State<AddPlace> {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   children: <Widget>[
                     TextField(
-                      decoration: InputDecoration(labelText: 'Title'),
+                      decoration: const InputDecoration(labelText: 'Title'),
                       controller: this._titleController,
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    ImageInput(),
+                    ImageInput(
+                      onSelectImage: _selectImage,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    LocationInput(),
                   ],
                 ),
               ),
             ),
           ),
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: _savePlace,
             icon: Icon(Icons.add),
             label: Text('Add place'),
             style: ButtonStyle(
