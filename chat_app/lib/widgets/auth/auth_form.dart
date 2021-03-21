@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  final void Function(String email, String password, String username, bool isLogin) submitForm;
+  final void Function(
+    String email,
+    String password,
+    String username,
+    bool isLogin,
+    BuildContext ctx,
+  ) submitForm;
+
+  bool isLoading;
 
   AuthForm({
     @required this.submitForm,
+    @required this.isLoading,
   });
 
   @override
@@ -24,7 +33,7 @@ class _AuthFormState extends State<AuthForm> {
 
     if (isValid) {
       _formKey.currentState.save();
-      this.widget.submitForm(this._userEmail, this._userName, this._userPassword, this._isLogin);
+      this.widget.submitForm(this._userEmail, this._userName, this._userPassword, this._isLogin, this.context);
     }
   }
 
@@ -86,18 +95,21 @@ class _AuthFormState extends State<AuthForm> {
                     },
                   ),
                   SizedBox(height: 12),
-                  ElevatedButton(
-                    child: Text(_isLogin ? 'Login' : 'Signup'),
-                    onPressed: _trySubmit,
-                  ),
-                  TextButton(
-                    child: Text(_isLogin ? 'Create new account' : 'I already have an account'),
-                    onPressed: () {
-                      setState(() {
-                        _isLogin = !_isLogin;
-                      });
-                    },
-                  )
+                  if (this.widget.isLoading) CircularProgressIndicator(),
+                  if (!this.widget.isLoading)
+                    ElevatedButton(
+                      child: Text(_isLogin ? 'Login' : 'Signup'),
+                      onPressed: _trySubmit,
+                    ),
+                  if (!this.widget.isLoading)
+                    TextButton(
+                      child: Text(_isLogin ? 'Create new account' : 'I already have an account'),
+                      onPressed: () {
+                        setState(() {
+                          _isLogin = !_isLogin;
+                        });
+                      },
+                    )
                 ],
               ),
             ),
