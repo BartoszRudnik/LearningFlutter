@@ -41,6 +41,9 @@ class _AuthScreenState extends State<AuthScreen> {
     } on PlatformException catch (error) {
       var message = 'An error occurred, please check your credentials';
 
+      print(email);
+      print(password);
+
       if (error.message != null) {
         message = error.message;
       }
@@ -52,9 +55,13 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       );
 
-      this._isLoading = false;
+      setState(() {
+        this._isLoading = false;
+      });
     } catch (error) {
-      this._isLoading = false;
+      setState(() {
+        this._isLoading = false;
+      });
       print(error);
     }
   }
