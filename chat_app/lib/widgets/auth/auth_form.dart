@@ -10,6 +10,7 @@ class AuthForm extends StatefulWidget {
     String username,
     bool isLogin,
     BuildContext ctx,
+    File userImage,
   ) submitForm;
 
   bool isLoading;
@@ -54,6 +55,7 @@ class _AuthFormState extends State<AuthForm> {
             this._userName.trim(),
             this._isLogin,
             this.context,
+            this._userImage,
           );
     }
   }
